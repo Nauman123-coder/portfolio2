@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEGIS-CDR | AI-Powered Content Disarm & Reconstruction</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cyan: #00d4ff;
+            --dark-bg: #060a10;
+            --surface: #0c1220;
+            --danger: #ff3c3c;
+            --success: #00ff9d;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--dark-bg);
+            color: #c9d8f0;
+            overflow-x: hidden;
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Animated Grid Background */
+        .grid-bg {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(to right, rgba(0, 212, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 212, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            mask-image: radial-gradient(circle at 50% 50%, black, transparent 80%);
+        }
+
+        /* Hero Animation Styles */
+        .hero-title-container {
+            perspective: 1000px;
+        }
+
+        .glitch-text {
+            position: relative;
+            display: inline-block;
+            background: linear-gradient(90deg, #fff, var(--cyan), #fff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 5s linear infinite;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        .letter-pop {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(30px) rotateX(-90deg);
+            animation: letter-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes letter-in {
+            to { opacity: 1; transform: translateY(0) rotateX(0); }
+        }
+
+        .hud-ring {
+            position: absolute;
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            border-radius: 50%;
+            animation: rotate-ring 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes rotate-ring {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .cyber-border {
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            position: relative;
+        }
+
+        .cyber-border::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px; width: 10px; height: 10px;
+            border-top: 2px solid var(--cyan); border-left: 2px solid var(--cyan);
+        }
+
+        .cyber-border::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; right: -1px; width: 10px; height: 10px;
+            border-bottom: 2px solid var(--cyan); border-right: 2px solid var(--cyan);
+        }
+
+        .scan-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: var(--cyan);
+            box-shadow: 0 0 10px var(--cyan);
+            z-index: 10;
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        .pipeline-step {
+            transition: all 0.3s ease;
+            border-left: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .pipeline-step:hover {
+            border-left-color: var(--cyan);
+            background: rgba(0, 212, 255, 0.03);
+            transform: translateX(10px);
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .risk-gauge {
+            stroke-dasharray: 283;
+            transition: stroke-dashoffset 1s ease-out;
+        }
+
+        .glass {
+            background: rgba(12, 18, 32, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .cyber-btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .cyber-btn::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .cyber-btn:hover::after {
+            left: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+
+    <!-- Nav -->
+    <nav class="fixed top-0 w-full z-[100] p-6">
+        <div class="max-w-7xl mx-auto flex justify-between items-center glass px-8 py-3 rounded-xl border-cyan-500/20 shadow-2xl">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 border border-cyan-500 flex items-center justify-center relative overflow-hidden">
+                    <div class="scan-line" style="animation-duration: 1.5s"></div>
+                    <i class="fas fa-shield-halved text-cyan-400"></i>
+                </div>
+                <span class="text-2xl font-bold tracking-tighter text-white">AEGIS<span class="text-cyan-500">-CDR</span></span>
+            </div>
+            <div class="hidden md:flex items-center gap-8 text-xs font-bold uppercase tracking-widest">
+                <a href="#philosophy" class="hover:text-cyan-400 transition-colors">Philosophy</a>
+                <a href="#pipeline" class="hover:text-cyan-400 transition-colors">Architecture</a>
+                <a href="#coverage" class="hover:text-cyan-400 transition-colors">Threat Coverage</a>
+                <a href="https://github.com/Nauman123-coder/aegis-cdr" target="_blank" class="px-5 py-2 border border-cyan-500/50 rounded hover:bg-cyan-500/10 transition-all">
+                    <i class="fab fa-github mr-2"></i> Source
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Refined Hero Section -->
+    <section class="relative min-h-screen flex flex-col justify-center items-center px-6 overflow-hidden pt-32 pb-20">
+        <div class="hud-ring w-[500px] h-[500px] opacity-20 border-dashed"></div>
+        <div class="hud-ring w-[700px] h-[700px] opacity-10" style="animation-direction: reverse;"></div>
+        
+        <div class="relative z-10 text-center max-w-5xl">
+            <div class="reveal mb-8 inline-flex items-center gap-3 px-4 py-1.5 glass rounded-full border-cyan-500/30">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                </span>
+                <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-400">Zero-Trust Document Sanitization v2.0</span>
+            </div>
+
+            <div class="hero-title-container mb-6">
+                <h1 class="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-white leading-[0.9] uppercase">
+                    <div id="hero-title-1" class="mb-2"></div>
+                    <div id="hero-title-2" class="glitch-text py-2"></div>
+                </h1>
+            </div>
+
+            <div class="reveal" style="transition-delay: 800ms;">
+                <p class="max-w-2xl mx-auto text-lg md:text-xl text-slate-400 mb-12 leading-relaxed">
+                    Aegis-CDR deconstructs malicious PDF and DOCX files into safe atomic components, surgically stripping threats using <span class="text-white font-bold">Groq-powered LLaMA 3.3 intelligence</span>.
+                </p>
+
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+                    <a href="https://web-production-a4b0e.up.railway.app/" target="_blank" class="cyber-btn w-full sm:w-auto px-12 py-5 bg-cyan-500 text-black font-extrabold uppercase tracking-[0.2em] text-sm rounded shadow-[0_0_50px_rgba(0,212,255,0.3)] hover:scale-105 transition-all">
+                        Launch Live Engine
+                    </a>
+                    <a href="last2.html" target="_blank" class="w-full sm:w-auto px-10 py-5 border border-white/20 glass hover:bg-white/5 transition-all uppercase tracking-widest font-bold text-xs flex items-center justify-center gap-2">
+                        Back to Portfolio
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30">
+            <span class="text-[10px] uppercase tracking-widest font-bold">Scroll to Decrypt</span>
+            <div class="w-px h-12 bg-gradient-to-b from-cyan-500 to-transparent"></div>
+        </div>
+    </section>
+
+    <!-- The CDR Philosophy -->
+    <section id="philosophy" class="py-32 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-20 items-center">
+                <div class="reveal">
+                    <h2 class="text-4xl font-bold mb-8 text-white tracking-tight">The <span class="text-cyan-500">CDR</span> Philosophy</h2>
+                    <p class="text-slate-400 mb-10 text-lg">Traditional antivirus asks: <span class="text-danger">"Is this file bad?"</span><br>Aegis asks: <span class="text-success">"What part of this is active content?"</span></p>
+                    
+                    <div class="space-y-4">
+                        <div class="glass p-6 rounded-lg border-l-4 border-cyan-500">
+                            <h4 class="text-white font-bold uppercase text-xs mb-2 tracking-widest">Beyond Detection</h4>
+                            <p class="text-sm text-slate-400">Instead of relying on signatures, we assume every file is hostile and rebuild it from mathematically safe primitives.</p>
+                        </div>
+                        <div class="glass p-6 rounded-lg border-l-4 border-cyan-500">
+                            <h4 class="text-white font-bold uppercase text-xs mb-2 tracking-widest">Pixel-Perfect Safety</h4>
+                            <p class="text-sm text-slate-400">Text, images, and formatting remain identical. Only the executable danger (Macros, JS, OLE) is erased.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reveal cyber-border p-1 bg-black/40">
+                    <div class="bg-zinc-900/80 p-6 mono text-[11px] leading-relaxed">
+                        <div class="flex gap-2 mb-4 border-b border-white/10 pb-2">
+                            <span class="w-3 h-3 rounded-full bg-red-500/50"></span>
+                            <span class="w-3 h-3 rounded-full bg-yellow-500/50"></span>
+                            <span class="w-3 h-3 rounded-full bg-green-500/50"></span>
+                            <span class="ml-4 text-zinc-500 uppercase">System Comparative Analysis</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-4">
+                                <span class="text-red-400">[ TRADITIONAL AV ]</span>
+                                <p>File → Signature Scan</p>
+                                <p class="text-red-500/70">✗ Fails on Obfuscation</p>
+                                <p class="text-red-500/70">✗ Reactive (Zero-Day Vulnerable)</p>
+                                <p>~99% Effective Rate</p>
+                            </div>
+                            <div class="space-y-4 border-l border-white/10 pl-4">
+                                <span class="text-cyan-400">[ AEGIS CDR ]</span>
+                                <p>File → Atomic Decomposition</p>
+                                <p class="text-success">✓ Strips ALL Active Content</p>
+                                <p class="text-success">✓ Mathematically Clean Rebuild</p>
+                                <p>100% Structural Safety</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4-Layer Pipeline -->
+    <section id="pipeline" class="py-32 px-6 bg-zinc-950/40">
+        <div class="max-w-7xl mx-auto">
+            <div class="reveal text-center mb-20">
+                <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">Hardened 4-Layer Security</h2>
+                <p class="text-slate-500 tracking-widest uppercase text-xs font-bold">The Sanitization Workflow</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="reveal pipeline-step p-8 glass h-full">
+                    <div class="text-cyan-500 text-2xl mb-6 font-bold mono">01</div>
+                    <h3 class="text-white font-bold mb-4 uppercase tracking-wider">Fingerprinting</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">Magic byte validation. Detects MZ (PE) headers disguised as PDF. Blocks extension spoofing at the binary level.</p>
+                </div>
+                <div class="reveal pipeline-step p-8 glass h-full" style="transition-delay: 100ms">
+                    <div class="text-cyan-500 text-2xl mb-6 font-bold mono">02</div>
+                    <h3 class="text-white font-bold mb-4 uppercase tracking-wider">Decomposition</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">Unpacks OPC packages (DOCX) or iterates xref objects (PDF). Maps every potential threat vector in the file tree.</p>
+                </div>
+                <div class="reveal pipeline-step p-8 glass h-full" style="transition-delay: 200ms">
+                    <div class="text-cyan-500 text-2xl mb-6 font-bold mono">03</div>
+                    <h3 class="text-white font-bold mb-4 uppercase tracking-wider">Disarming</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">Surgical removal of /JavaScript, /OpenAction, VBA Macros, and DDE objects. Neutralizes external phishing URIs.</p>
+                </div>
+                <div class="reveal pipeline-step p-8 glass h-full" style="transition-delay: 300ms">
+                    <div class="text-cyan-500 text-2xl mb-6 font-bold mono">04</div>
+                    <h3 class="text-white font-bold mb-4 uppercase tracking-wider">AI Synthesis</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">Groq LLaMA 3.3-70B generates a natural language narrative of found threats and executes a final risk score.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Threat Dashboard Demo -->
+    <section id="coverage" class="py-32 px-6">
+        <div class="max-w-5xl mx-auto glass rounded-3xl overflow-hidden border border-white/5 shadow-2xl">
+            <div class="bg-zinc-900/80 px-8 py-4 border-b border-white/5 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <div class="flex gap-1.5">
+                        <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                    </div>
+                    <span class="text-[10px] uppercase font-bold tracking-widest text-zinc-500">Live_Analysis_Report_1092.json</span>
+                </div>
+                <div class="px-3 py-1 bg-red-500/20 text-red-400 rounded text-[9px] font-bold uppercase tracking-widest">Critical Threat Detected</div>
+            </div>
+            
+            <div class="p-10 grid md:grid-cols-2 gap-12">
+                <div class="flex flex-col items-center justify-center text-center">
+                    <div class="relative w-48 h-48 mb-6">
+                        <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="transparent" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
+                            <circle cx="50" cy="50" r="45" fill="transparent" stroke="var(--danger)" stroke-width="8" class="risk-gauge" style="stroke-dashoffset: 28;"/>
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span class="text-5xl font-bold text-white leading-none">100</span>
+                            <span class="text-[10px] font-bold uppercase text-red-500 tracking-widest">Risk Score</span>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <h4 class="text-2xl font-bold text-white">Status: <span class="text-red-500">CRITICAL</span></h4>
+                        <p class="text-xs text-zinc-500 max-w-xs">14 High-severity threats detected including VBA Macros and PowerShell Cradles.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="space-y-4">
+                        <div class="flex justify-between text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                            <span>Scripts & JS</span>
+                            <span class="text-red-400">Detected</span>
+                        </div>
+                        <div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                            <div class="bg-red-500 h-full w-full"></div>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex justify-between text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                            <span>VBA Macros</span>
+                            <span class="text-red-400">Detected</span>
+                        </div>
+                        <div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                            <div class="bg-red-500 h-full w-full"></div>
+                        </div>
+                    </div>
+                    <div class="mt-8 pt-8 border-t border-white/5">
+                        <div class="flex items-center gap-3 mb-4">
+                            <i class="fas fa-brain text-cyan-500 text-sm"></i>
+                            <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-500">AI Narrative Generated by LLaMA-3.3-70B</span>
+                        </div>
+                        <p class="text-xs text-zinc-400 italic leading-relaxed">
+                            "The document 'malicious_test.docx' contains severe auto-execute scripts designed to spawn shell processes. Aegis has effectively isolated the vbaProject.bin and neutralized 2 encrypted DDE payloads. Reconstruction confirmed safe at 100% visual fidelity."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack Grid -->
+    <section class="py-20 px-6 border-t border-white/5">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-center gap-12 opacity-40 hover:opacity-100 transition-opacity">
+            <div class="flex items-center gap-3 grayscale hover:grayscale-0 transition-all">
+                <i class="fab fa-python text-3xl text-sky-400"></i>
+                <span class="font-bold tracking-widest text-xs uppercase">Python 3.10+</span>
+            </div>
+            <div class="flex items-center gap-3 grayscale hover:grayscale-0 transition-all">
+                <i class="fas fa-bolt text-3xl text-emerald-400"></i>
+                <span class="font-bold tracking-widest text-xs uppercase">FastAPI</span>
+            </div>
+            <div class="flex items-center gap-3 grayscale hover:grayscale-0 transition-all">
+                <i class="fas fa-brain text-3xl text-orange-400"></i>
+                <span class="font-bold tracking-widest text-xs uppercase">Groq LLM</span>
+            </div>
+            <div class="flex items-center gap-3 grayscale hover:grayscale-0 transition-all">
+                <i class="fas fa-file-pdf text-3xl text-red-400"></i>
+                <span class="font-bold tracking-widest text-xs uppercase">PyMuPDF</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-20 px-6 border-t border-white/5 bg-black">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12">
+            <div>
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 border border-cyan-500 flex items-center justify-center">
+                        <i class="fas fa-shield-halved text-cyan-400 text-sm"></i>
+                    </div>
+                    <span class="text-xl font-bold tracking-tighter text-white">AEGIS<span class="text-cyan-500">-CDR</span></span>
+                </div>
+                <p class="text-sm text-zinc-500 max-w-sm leading-relaxed">
+                    Designed and built by Nauman Ahmad (Nauman123-coder). A Zero-Trust approach to document security using modern LLM inference.
+                </p>
+            </div>
+            <div class="flex flex-col md:items-end gap-6">
+                <div class="flex gap-6">
+                    <a href="https://github.com/Nauman123-coder" class="text-zinc-500 hover:text-cyan-400 transition-colors text-2xl"><i class="fab fa-github"></i></a>
+                    <a href="#" class="text-zinc-500 hover:text-cyan-400 transition-colors text-2xl"><i class="fab fa-linkedin"></i></a>
+                </div>
+                <p class="text-[10px] text-zinc-600 uppercase tracking-widest">Released under MIT License. Stars appreciated.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Hero Animation Logic
+        const title1 = "DETECT. DISARM.";
+        const title2 = "RECONSTRUCT.";
+        
+        function animateTitle(text, containerId, delay = 0) {
+            const container = document.getElementById(containerId);
+            text.split('').forEach((char, i) => {
+                const span = document.createElement('span');
+                span.innerText = char === ' ' ? '\u00A0' : char;
+                span.className = 'letter-pop';
+                span.style.animationDelay = `${delay + (i * 50)}ms`;
+                container.appendChild(span);
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            animateTitle(title1, 'hero-title-1', 200);
+            animateTitle(title2, 'hero-title-2', 1000);
+        });
+
+        // Intersection Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guardian Agent v2 | High-Fidelity Defense</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --bg-deep: #000000;
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --accent: #ffffff;
+        }
+
+        /* STRICT NO-ITALICS RULE */
+        * {
+            font-style: normal !important;
+            font-family: 'Space Grotesk', sans-serif;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            overflow-x: hidden;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.35;
+        }
+
+        /* Progress Bar */
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: var(--accent);
+            z-index: 100;
+            width: 0%;
+            transition: width 0.1s ease-out;
+        }
+
+        /* Soft boundary-less panels */
+        .soft-panel {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(25px);
+            border-radius: 48px;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .soft-panel:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-8px);
+            box-shadow: 0 40px 80px -20px rgba(0,0,0,0.5);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .text-shiny {
+            background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.4) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .para-premium {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+            text-align: left;
+        }
+
+        .section-tag {
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: #71717a;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        /* Responsive Layout Utilities */
+        .responsive-container {
+            width: 100%;
+            max-width: 1280px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+
+        /* Illustration animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        .float-anim { animation: float 6s ease-in-out infinite; }
+
+        @keyframes pulse-white {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        .node-pulse { animation: pulse-white 3s ease-in-out infinite; }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+        .stat-card {
+            padding: 2rem;
+            border-left: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .arch-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .arch-card:hover {
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-primary {
+            background: #fff;
+            color: #000;
+            padding: 1rem 2.5rem;
+            border-radius: 9999px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.75rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .btn-primary:hover {
+            background: #e4e4e7;
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            padding: 1rem 2.5rem;
+            border-radius: 9999px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.75rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="progress-bar"></div>
+    <div id="canvas-container"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 top-6 px-4 md:px-10">
+        <div class="max-w-6xl mx-auto flex justify-between items-center bg-white/5 backdrop-blur-xl py-4 px-6 md:px-10 rounded-full border border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                <span class="text-sm font-black tracking-widest uppercase">Guardian.v2</span>
+            </div>
+            <div class="hidden md:flex gap-10">
+                <a href="#about" class="text-[10px] font-bold tracking-[0.3em] uppercase text-zinc-400 hover:text-white transition-colors">Analyzer</a>
+                <a href="#pipeline" class="text-[10px] font-bold tracking-[0.3em] uppercase text-zinc-400 hover:text-white transition-colors">Pipeline</a>
+                <a href="#architecture" class="text-[10px] font-bold tracking-[0.3em] uppercase text-zinc-400 hover:text-white transition-colors">Architecture</a>
+                <a href="#precision" class="text-[10px] font-bold tracking-[0.3em] uppercase text-zinc-400 hover:text-white transition-colors">Bio-Precision</a>
+            </div>
+            <a href="https://guardian-agent-v2.vercel.app" class="bg-white text-black px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-wider hover:bg-zinc-200 transition-all">Live Demo</a>
+        </div>
+    </nav>
+
+    <main class="relative z-10 pt-32">
+        <!-- Hero Section -->
+        <section class="min-h-[90vh] flex flex-col justify-center items-center text-center responsive-container py-20">
+            <span class="section-tag">High Precision Autonomous Response</span>
+            <h1 class="text-6xl md:text-9xl font-black text-shiny mb-8 tracking-tighter leading-[0.9]">
+                DEFENSE<br/>BY DESIGN.
+            </h1>
+            <p class="para-premium text-center mx-auto mb-12 max-w-2xl">
+                A surgical approach to threat containment. Transforming raw telemetry into immediate defense through LLM-driven reasoning and clinical precision.
+            </p>
+            
+            <!-- CTAs -->
+            <div class="flex flex-col sm:flex-row gap-6 mb-16">
+                <a href="last2.html" class="btn-primary">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Portfolio
+                </a>
+                <a href="https://github.com/Nauman123-coder" class="btn-secondary">
+                    <i class="fab fa-github text-lg"></i>
+                    View on GitHub
+                </a>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-12 w-full max-w-4xl">
+                <div class="stat-card">
+                    <div class="text-3xl font-bold">76s</div>
+                    <div class="text-[10px] text-zinc-500 uppercase tracking-widest mt-1">Mean Response</div>
+                </div>
+                <div class="stat-card">
+                    <div class="text-3xl font-bold">99.8%</div>
+                    <div class="text-[10px] text-zinc-500 uppercase tracking-widest mt-1">Accuracy Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="text-3xl font-bold">70+</div>
+                    <div class="text-[10px] text-zinc-500 uppercase tracking-widest mt-1">AV Engines</div>
+                </div>
+                <div class="stat-card">
+                    <div class="text-3xl font-bold">L3.3</div>
+                    <div class="text-[10px] text-zinc-500 uppercase tracking-widest mt-1">Core Logic</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- The "Clinic" Analysis Section -->
+        <section id="about" class="responsive-container">
+            <div class="grid lg:grid-cols-2 gap-12 md:gap-24 items-center">
+                <div class="soft-panel p-8 md:p-16">
+                    <span class="section-tag">Diagnostic Module</span>
+                    <h2 class="text-4xl font-bold mb-8 text-white">Digital Pathology.</h2>
+                    <p class="para-premium mb-8">
+                        Traditional security systems act as simple filters. Guardian v2 acts as a forensic diagnostician. It treats every suspicious log entry as a clinical symptom, building a full patient history of the threat before taking action.
+                    </p>
+                    <p class="para-premium">
+                        By integrating Llama 3.3 70B, the agent understands not just the "what" (the hash or the IP), but the "why"—the intent of the attacker. This depth allows for autonomous containment that humans can trust.
+                    </p>
+                </div>
+                <!-- Animated SVG Security Graphic -->
+                <div class="flex justify-center float-anim">
+                    <svg viewBox="0 0 400 400" class="w-full max-w-[450px] opacity-80">
+                        <defs>
+                            <radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                                <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:0.2" />
+                                <stop offset="100%" style="stop-color:rgb(0,0,0);stop-opacity:0" />
+                            </radialGradient>
+                        </defs>
+                        <circle cx="200" cy="200" r="180" fill="url(#grad1)" />
+                        <rect x="120" y="120" width="160" height="160" rx="40" fill="none" stroke="white" stroke-width="1.5" stroke-dasharray="10 5" />
+                        <path d="M150 200 L185 235 L250 165" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                        <circle cx="200" cy="200" r="100" fill="none" stroke="white" stroke-width="0.5" opacity="0.5" />
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- System Architecture Design Section -->
+        <section id="architecture" class="responsive-container py-32">
+            <div class="text-center mb-20">
+                <span class="section-tag">Infrastructure</span>
+                <h2 class="text-5xl md:text-6xl font-black text-shiny mb-6">System Architecture</h2>
+                <p class="para-premium mx-auto text-center max-w-2xl">
+                    A distributed, high-availability blueprint designed for millisecond throughput and unyielding security.
+                </p>
+            </div>
+
+            <div class="soft-panel p-8 md:p-16 relative">
+                <!-- Architecture Diagram Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative z-10">
+                    
+                    <!-- Client Tier -->
+                    <div class="flex flex-col items-center">
+                        <div class="arch-card w-full">
+                            <i class="fas fa-users text-2xl mb-4 text-white opacity-50"></i>
+                            <h4 class="text-sm font-bold uppercase tracking-widest">Client Tier</h4>
+                            <p class="text-[10px] text-zinc-500 mt-2">Mobile & Web Assets</p>
+                        </div>
+                        <div class="h-16 w-[1px] bg-gradient-to-b from-white to-transparent opacity-20 hidden md:block mt-4"></div>
+                    </div>
+
+                    <!-- API Gateway -->
+                    <div class="flex flex-col items-center">
+                        <div class="arch-card w-full">
+                            <i class="fas fa-network-wired text-2xl mb-4 text-white opacity-50"></i>
+                            <h4 class="text-sm font-bold uppercase tracking-widest">API Gateway</h4>
+                            <p class="text-[10px] text-zinc-500 mt-2">Auth & Rate Limiting</p>
+                        </div>
+                        <div class="h-16 w-[1px] bg-gradient-to-b from-white to-transparent opacity-20 hidden md:block mt-4"></div>
+                    </div>
+
+                    <!-- Processing Core -->
+                    <div class="flex flex-col items-center">
+                        <div class="arch-card w-full">
+                            <i class="fas fa-microchip text-2xl mb-4 text-white opacity-50"></i>
+                            <h4 class="text-sm font-bold uppercase tracking-widest">Logic Core</h4>
+                            <p class="text-[10px] text-zinc-500 mt-2">Distributed Workers</p>
+                        </div>
+                        <div class="h-16 w-[1px] bg-gradient-to-b from-white to-transparent opacity-20 hidden md:block mt-4"></div>
+                    </div>
+
+                    <!-- Data Layer -->
+                    <div class="flex flex-col items-center">
+                        <div class="arch-card w-full border-white/40">
+                            <i class="fas fa-database text-2xl mb-4 text-white opacity-50"></i>
+                            <h4 class="text-sm font-bold uppercase tracking-widest">Data Store</h4>
+                            <p class="text-[10px] text-zinc-500 mt-2">NoSQL & Vector DB</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Connecting Flow SVG Background -->
+                <div class="absolute inset-0 top-1/2 left-0 w-full pointer-events-none hidden md:block" style="height: 2px;">
+                    <svg width="100%" height="100" class="opacity-10">
+                        <line x1="12.5%" y1="0" x2="87.5%" y2="0" stroke="white" stroke-width="2" stroke-dasharray="8,8" class="node-pulse" />
+                    </svg>
+                </div>
+
+                <div class="mt-20 grid md:grid-cols-2 gap-12">
+                    <div class="space-y-6">
+                        <h3 class="text-2xl font-bold">Scaling Strategy</h3>
+                        <p class="text-zinc-400 text-sm leading-relaxed">
+                            Every component is containerized using Docker and orchestrated via Kubernetes. This ensures that the Guardian Agent can scale horizontally to meet massive bursts in telemetry logs during a coordinated DDoS or ransomware outbreak.
+                        </p>
+                    </div>
+                    <div class="space-y-6">
+                        <h3 class="text-2xl font-bold">Consistency Model</h3>
+                        <p class="text-zinc-400 text-sm leading-relaxed">
+                            We utilize a "Eventually Consistent" model for global reporting while maintaining strict "Read-after-Write" consistency for security configurations, ensuring that a blocked IP is recognized across all edge nodes instantly.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pipeline Breakdown -->
+        <section id="pipeline" class="responsive-container">
+            <div class="soft-panel p-8 md:p-20 overflow-hidden">
+                <div class="max-w-3xl mb-20">
+                    <span class="section-tag">Workflow Logic</span>
+                    <h2 class="text-5xl font-bold mb-8">The 76-Second Pipeline.</h2>
+                    <p class="para-premium">
+                        While manual SOC teams take an average of 45 minutes to investigate a ransomware event, Guardian v2 completes the cycle in seconds.
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-12">
+                    <div class="space-y-4">
+                        <div class="text-xs font-black text-white/20">STAGE 01</div>
+                        <h4 class="text-xl font-bold">Ingestion & Enrichment</h4>
+                        <p class="text-zinc-500 text-sm">Raw logs are piped from the Web Server, immediately enriched with global threat data from VirusTotal and AbuseIPDB.</p>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="text-xs font-black text-white/20">STAGE 02</div>
+                        <h4 class="text-xl font-bold">LLM Reasoning</h4>
+                        <p class="text-zinc-500 text-sm">Our core LLM reviews the context of the user, the timing of the event, and the technical indicators to assign a risk score.</p>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="text-xs font-black text-white/20">STAGE 03</div>
+                        <h4 class="text-xl font-bold">Autonomous Action</h4>
+                        <p class="text-zinc-500 text-sm">If scores cross the threshold, the Mitigator triggers firewall blocks or account freezes via API—no human waiting required.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Precision: Bio to AI -->
+        <section id="precision" class="responsive-container pb-40">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="order-2 lg:order-1 flex justify-center py-10">
+                    <svg viewBox="0 0 300 300" class="w-full max-w-[350px]">
+                        <circle cx="150" cy="150" r="120" fill="none" stroke="white" stroke-width="0.5" />
+                        <path d="M150 30 V270 M30 150 H270" stroke="white" stroke-width="0.5" opacity="0.3" />
+                        <rect x="135" y="135" width="30" height="30" fill="white" />
+                        <circle cx="150" cy="150" r="60" fill="none" stroke="white" stroke-width="1" />
+                    </svg>
+                </div>
+                <div class="soft-panel p-8 md:p-20 order-1 lg:order-2">
+                    <span class="section-tag">Personal Philosophy</span>
+                    <h2 class="text-4xl font-bold mb-8">Bio-Logical Security.</h2>
+                    <p class="para-premium mb-6">
+                        Transitioning from pre-medical excellence (96%+ grades) to AI programming wasn't a change of focus—it was an expansion of scope. I apply the same "do no harm" discipline and diagnostic rigor to network health as a surgeon applies to a patient.
+                    </p>
+                    <p class="para-premium">
+                        At GCU Lahore and beyond, I realized that code is simply another form of DNA. Guardian v2 is my digital immune system—a mechanism that recognizes the "non-self" and neutralizes it before it can spread.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-black py-20 border-t border-white/5">
+        <div class="responsive-container flex flex-col md:flex-row justify-between items-center gap-10">
+            <div>
+                <h3 class="text-xl font-black mb-1">NAUMAN ALI SHAH</h3>
+                <p class="text-zinc-600 uppercase text-[10px] tracking-widest font-black">Autonomous Systems Architect</p>
+            </div>
+            <div class="flex gap-12">
+                <a href="https://github.com/Nauman123-coder" class="text-zinc-500 hover:text-white transition-colors"><i class="fab fa-github fa-2x"></i></a>
+                <a href="https://www.linkedin.com/in/nauman-ali-shah-27387b351" class="text-zinc-500 hover:text-white transition-colors"><i class="fab fa-linkedin-in fa-2x"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // THREE.JS BACKGROUND: CLEANER WIREFRAME GRID
+        let scene, camera, renderer, grid;
+
+        function init3D() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+            
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            const size = 200;
+            const divisions = 20;
+            const gridHelper = new THREE.GridHelper(size, divisions, 0x444444, 0x111111);
+            gridHelper.position.y = -20;
+            scene.add(gridHelper);
+
+            camera.position.set(0, 10, 50);
+            camera.lookAt(0, 0, 0);
+
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const time = Date.now() * 0.0002;
+            scene.rotation.y = time * 0.5;
+            renderer.render(scene, camera);
+        }
+
+        // Scroll Progress & Responsive Resize
+        window.onscroll = function() {
+            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrolled = (winScroll / height) * 100;
+            document.getElementById("progress-bar").style.width = scrolled + "%";
+        };
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        window.onload = init3D;
+
+        // Intersection Observer for staggered fade-ins
+        const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100');
+                    entry.target.classList.remove('opacity-0', 'translate-y-10');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.soft-panel').forEach(el => {
+            el.classList.add('opacity-0', 'translate-y-10', 'transition-all', 'duration-1000');
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

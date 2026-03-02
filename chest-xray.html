@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chest X-Ray Diagnosis | Deep Learning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono&display=swap');
+        
+        :root {
+            --primary: #0ea5e9;
+            --secondary: #6366f1;
+            --dark: #020617;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: #f8fafc;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        .glass {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.1) 0%, transparent 70%);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .pathology-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .pathology-card:hover {
+            background: rgba(14, 165, 233, 0.15);
+            border-color: rgba(14, 165, 233, 0.5);
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px -10px rgba(14, 165, 233, 0.3);
+        }
+
+        .scan-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: #0ea5e9;
+            box-shadow: 0 0 15px #0ea5e9, 0 0 5px #fff;
+            z-index: 20;
+            animation: scan 3s ease-in-out infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0%; opacity: 0; }
+            5% { opacity: 1; }
+            95% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .stat-card {
+            border-left: 3px solid var(--primary);
+            transition: border-left 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            border-left-width: 8px;
+        }
+
+        /* X-ray container sizing */
+        .xray-container {
+            max-width: 450px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center glass rounded-2xl px-6 py-3">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-lungs text-sky-400 text-2xl animate-pulse"></i>
+                <span class="font-bold tracking-tighter text-xl">CHEST-AI<span class="text-sky-500/50">.v1</span></span>
+            </div>
+            <div class="hidden md:flex gap-8 items-center text-[10px] font-bold uppercase tracking-widest">
+                <a href="#overview" class="hover:text-sky-400 transition-colors">Overview</a>
+                <a href="#pathologies" class="hover:text-sky-400 transition-colors">Pathologies</a>
+                <a href="#architecture" class="hover:text-sky-400 transition-colors">Architecture</a>
+                <a href="#interpretability" class="hover:text-sky-400 transition-colors">Interpretability</a>
+                <a href="https://github.com/Nauman123-coder/Chest-X-Ray-Medical-Diagnosis" target="_blank" class="bg-sky-500 text-white px-4 py-2 rounded-lg hover:shadow-[0_0_15px_rgba(14,165,233,0.4)] transition-all">
+                    <i class="fab fa-github mr-2"></i> Code
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-20 hero-gradient">
+        <div class="reveal inline-flex items-center gap-2 bg-sky-500/10 border border-sky-500/20 px-4 py-1.5 rounded-full mb-8">
+            <span class="w-2 h-2 bg-sky-500 rounded-full animate-ping"></span>
+            <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-sky-400">GCU Lahore AI Project</span>
+        </div>
+        
+        <h1 class="reveal text-5xl md:text-8xl font-black tracking-tighter mb-8 leading-[0.9]">
+            AI-Powered<br/><span class="gradient-text">Radiology.</span>
+        </h1>
+        
+        <p class="reveal max-w-2xl text-lg text-slate-400 mb-12 leading-relaxed">
+            Automated diagnostic system detecting 14 pathologies with clinical precision. Built with DenseNet121 & Explainable AI.
+        </p>
+        
+        <div class="reveal flex flex-wrap justify-center gap-4">
+            <a href="#interpretability" class="px-8 py-4 bg-white text-black font-bold rounded-xl hover:bg-sky-50 hover:scale-105 transition-all">
+                Interpretability Demo
+            </a>
+            <a href="last2.html" class="px-8 py-4 glass text-white font-bold rounded-xl hover:bg-white/10 transition-all">
+                Portfolio Home
+            </a>
+        </div>
+
+        <div class="reveal grid grid-cols-2 md:grid-cols-4 gap-8 w-full max-w-4xl mt-24 border-t border-white/5 pt-12">
+            <div class="group">
+                <div class="text-3xl font-bold mono group-hover:text-sky-400 transition-colors">108K</div>
+                <div class="text-[10px] uppercase tracking-widest text-slate-500">NIH Dataset</div>
+            </div>
+            <div class="group">
+                <div class="text-3xl font-bold mono group-hover:text-sky-400 transition-colors">14</div>
+                <div class="text-[10px] uppercase tracking-widest text-slate-500">Class Labels</div>
+            </div>
+            <div class="group">
+                <div class="text-3xl font-bold mono group-hover:text-sky-400 transition-colors">0.9+</div>
+                <div class="text-[10px] uppercase tracking-widest text-slate-500">Max AUROC</div>
+            </div>
+            <div class="group">
+                <div class="text-3xl font-bold mono group-hover:text-sky-400 transition-colors">Dense</div>
+                <div class="text-[10px] uppercase tracking-widest text-slate-500">Net121</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview & Clinical Significance -->
+    <section id="overview" class="py-32 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="reveal xray-container relative group">
+                    <div class="rounded-3xl overflow-hidden border border-white/10 relative shadow-2xl bg-black">
+                        <div class="scan-line"></div>
+                        <!-- Using local xray.png as requested -->
+                        <img src="chest-xray.png" class="w-full opacity-80 h-[400px] group-hover:opacity-100 transition-opacity" alt="Patient X-ray" onerror="this.src='https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&q=80&w=1000'; this.classList.add('grayscale')">
+
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                        <div class="absolute bottom-6 left-6 right-6">
+                            <div class="glass p-5 rounded-xl border-sky-500/30">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-[10px] font-bold text-sky-400 uppercase tracking-widest">Model Inference</span>
+                                    <span class="text-[10px] font-mono text-slate-400">ID: 2841-X</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span>Infiltration</span>
+                                        <span class="text-sky-400 font-bold">89%</span>
+                                    </div>
+                                    <div class="w-full bg-white/5 h-1.5 rounded-full">
+                                        <div class="bg-sky-500 h-full w-[89%] shadow-[0_0_8px_#0ea5e9]"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reveal space-y-8">
+                    <span class="text-sky-500 font-bold tracking-[0.3em] uppercase text-xs">Pathological Insight</span>
+                    <h2 class="text-5xl font-extrabold tracking-tight leading-tight">Bridging Global<br/><span class="text-sky-400">Radiology Gaps.</span></h2>
+                    <p class="text-slate-400 text-lg leading-relaxed">
+                        In regions with limited specialist access, automated interpretation provides a vital second opinion. Our model prioritizes critical findings like Pneumothorax to ensure immediate clinical intervention.
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="stat-card p-6 bg-white/[0.03] rounded-2xl hover:bg-white/[0.05] transition-all">
+                            <i class="fas fa-bolt text-sky-400 mb-3"></i>
+                            <h4 class="font-bold text-white mb-1">Time Efficiency</h4>
+                            <p class="text-xs text-slate-500">Reduces diagnostic turnaround from hours to seconds.</p>
+                        </div>
+                        <div class="stat-card p-6 bg-white/[0.03] rounded-2xl border-sky-400 hover:bg-white/[0.05] transition-all">
+                            <i class="fas fa-stethoscope text-sky-400 mb-3"></i>
+                            <h4 class="font-bold text-white mb-1">Second Opinion</h4>
+                            <p class="text-xs text-slate-500">Serves as a reliable validation tool for medical staff.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pathologies Grid -->
+    <section id="pathologies" class="py-32 px-6 bg-white/[0.01]">
+        <div class="max-w-7xl mx-auto">
+            <div class="reveal text-center mb-16">
+                <h2 class="text-4xl font-black mb-4 tracking-tighter uppercase">Clinical Conditions</h2>
+                <div class="h-1 w-20 bg-sky-500 mx-auto rounded-full mb-6"></div>
+                <p class="text-slate-500 max-w-xl mx-auto text-sm">Targeting 14 distinct pathological findings from the NIH ChestX-ray8 dataset.</p>
+            </div>
+
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="reveal pathology-card glass p-6 rounded-2xl">
+                    <h3 class="font-bold text-sky-400 mb-2">Atelectasis</h3>
+                    <p class="text-[11px] text-slate-500 leading-relaxed">Collapse of lung tissue affecting gas exchange.</p>
+                </div>
+                <div class="reveal pathology-card glass p-6 rounded-2xl" style="transition-delay: 100ms">
+                    <h3 class="font-bold text-sky-400 mb-2">Effusion</h3>
+                    <p class="text-[11px] text-slate-500 leading-relaxed">Fluid buildup between pleural layers.</p>
+                </div>
+                <div class="reveal pathology-card glass p-6 rounded-2xl" style="transition-delay: 200ms">
+                    <h3 class="font-bold text-sky-400 mb-2">Consolidation</h3>
+                    <p class="text-[11px] text-slate-500 leading-relaxed">Air sacs filled with fluid or inflammatory cells.</p>
+                </div>
+                <div class="reveal pathology-card glass p-6 rounded-2xl" style="transition-delay: 300ms">
+                    <h3 class="font-bold text-sky-400 mb-2">Pneumonia</h3>
+                    <p class="text-[11px] text-slate-500 leading-relaxed">Infection inflaming the air sacs in one or both lungs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interpretability Demo -->
+    <section id="interpretability" class="py-32 px-6 bg-sky-500/5 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto text-center relative z-10">
+            <h2 class="reveal text-5xl font-black mb-6 tracking-tight">XAI: Seeing Through the AI.</h2>
+            <p class="reveal text-slate-400 max-w-2xl mx-auto mb-16">GradCAM visualization identifies anatomical hotspots, ensuring the model isn't learning from artifacts or medical equipment.</p>
+            
+            <div class="reveal flex flex-col md:flex-row justify-center items-center gap-12">
+                <div class="group relative">
+                    <div class="w-64 h-64 glass rounded-3xl overflow-hidden shadow-2xl">
+                        <img src="xray.png" class="w-full h-full object-cover grayscale" alt="Input">
+                    </div>
+                    <div class="mt-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Input Image</div>
+                </div>
+                
+                <i class="fas fa-chevron-right text-sky-500 text-2xl hidden md:block animate-pulse"></i>
+                
+                <div class="group relative">
+                    <div class="w-64 h-64 glass rounded-3xl overflow-hidden shadow-2xl relative">
+                        <img src="xray.png" class="w-full h-full object-cover grayscale opacity-50" alt="Heatmap">
+                        <div class="absolute inset-0 bg-gradient-to-br from-red-600/60 via-yellow-400/40 to-blue-500/20 blur-xl mix-blend-overlay"></div>
+                        <div class="absolute top-1/4 left-1/3 w-20 h-20 bg-red-500/40 rounded-full blur-2xl animate-pulse"></div>
+                    </div>
+                    <div class="mt-4 text-[10px] font-bold text-sky-400 uppercase tracking-widest">GradCAM Heatmap</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-20 border-t border-white/5 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="text-center md:text-left">
+                <h2 class="text-2xl font-black tracking-tighter">NAUMAN ALI SHAH</h2>
+                <p class="text-[10px] font-bold text-sky-500 uppercase tracking-[0.3em] mt-1">AI Research | GCU Lahore</p>
+            </div>
+            <div class="flex gap-4">
+                <a href="https://github.com/Nauman123-coder" class="w-12 h-12 glass rounded-xl flex items-center justify-center hover:bg-sky-500 hover:text-white transition-all"><i class="fab fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/nauman-ali-shah-27387b351" class="w-12 h-12 glass rounded-xl flex items-center justify-center hover:bg-sky-500 hover:text-white transition-all"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-12 pt-8 border-t border-white/5 text-center">
+            <p class="text-[9px] text-slate-600 uppercase tracking-widest leading-loose max-w-2xl mx-auto">
+                Disclaimer: This software is an educational research tool and must not be used for clinical diagnosis without human radiologist supervision.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Reveal on scroll logic
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>

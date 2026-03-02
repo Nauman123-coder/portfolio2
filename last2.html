@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nauman Ali Shah | AI & ML Engineer | Medical AI Specialist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #f8f9fa;
+            --accent-pink: #fce7f3;
+            --accent-blue: #dbeafe;
+            --text-dark: #1f2937;
+            --text-muted: #6b7280;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color: var(--text-dark); }
+        h1, h2, .serif-font { font-family: 'Playfair Display', serif; }
+        .mono-font { font-family: 'JetBrains Mono', monospace; }
+        .text-vertical { writing-mode: vertical-rl; transform: rotate(180deg); }
+        .skill-dot { width: 8px; height: 8px; border-radius: 50%; background-color: #d1d5db; display: inline-block; margin-right: 4px; }
+        .skill-dot-filled { background-color: #1f2937; }
+        .curved-img-tl { border-top-left-radius: 100px; }
+        .arch-mask { border-radius: 40% 40% 0 0 / 20% 20% 0 0; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .animate-spin-slow { animation: spin 14s linear infinite; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #9ca3af; border-radius: 10px; }
+        
+        /* Mobile menu smooth transition */
+        #mobile-menu {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden selection:bg-pink-100">
+
+    <!-- Social Sidebar -->
+    <div class="fixed left-6 top-1/2 -translate-y-1/2 flex flex-col items-center gap-6 text-gray-400 hidden lg:flex z-50">
+        <a href="https://github.com/Nauman123-coder" class="hover:text-black transition-colors text-lg"><i class="fab fa-github"></i></a>
+        <a href="https://www.linkedin.com/in/nauman-ali-shah-27387b351" class="hover:text-black transition-colors text-lg"><i class="fab fa-linkedin-in"></i></a>
+        <a href="https://x.com/NaumanAS393" class="hover:text-black transition-colors text-lg"><i class="fab fa-twitter"></i></a>
+        <div class="h-24 w-[1px] bg-gray-300 my-2"></div>
+        <span class="text-vertical uppercase text-[9px] tracking-[0.3em] font-bold">Follow Me</span>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div class="max-w-7xl mx-auto">
+            <!-- Desktop / Tablet Top Bar -->
+            <div class="flex justify-between items-center px-6 md:px-12 py-5">
+                <!-- Logo -->
+                <div class="flex items-baseline group cursor-pointer">
+                    <span class="text-3xl serif-font font-bold">N</span>
+                    <span class="text-[10px] ml-2 uppercase tracking-[0.4em] text-gray-500 font-bold group-hover:text-black transition-colors">auman Ali Shah</span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <ul class="hidden lg:flex gap-10 text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">
+                    <li><a href="#about" class="hover:text-black transition-colors">About me</a></li>
+                    <li><a href="#education" class="hover:text-black transition-colors">Education</a></li>
+                    <li><a href="#portfolio" class="hover:text-black transition-colors">Portfolio</a></li>
+                    <li><a href="#experience" class="hover:text-black transition-colors">Experience</a></li>
+                    <li><a href="#contacts" class="hover:text-black transition-colors">Contacts</a></li>
+                </ul>
+
+                <!-- Right side: CV + Mobile Hamburger -->
+                <div class="flex items-center gap-4">
+                    <a href="#" class="bg-[#1f2937] text-white px-7 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-black transition-all shadow-lg shadow-black/10">
+                        Download CV 
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                    </a>
+                    
+                    <!-- Hamburger -->
+                    <button onclick="toggleMobileMenu()" class="lg:hidden p-2 text-3xl text-gray-700 hover:text-black transition-colors">
+                        <i id="menu-icon" class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-gray-100 px-6 py-10">
+                <ul class="flex flex-col items-center gap-8 text-base font-bold uppercase tracking-[0.2em] text-gray-500">
+                    <li><a href="#about" onclick="toggleMobileMenu()" class="hover:text-black transition-colors py-2">About me</a></li>
+                    <li><a href="#education" onclick="toggleMobileMenu()" class="hover:text-black transition-colors py-2">Education</a></li>
+                    <li><a href="#portfolio" onclick="toggleMobileMenu()" class="hover:text-black transition-colors py-2">Portfolio</a></li>
+                    <li><a href="#experience" onclick="toggleMobileMenu()" class="hover:text-black transition-colors py-2">Experience</a></li>
+                    <li><a href="#contacts" onclick="toggleMobileMenu()" class="hover:text-black transition-colors py-2">Contacts</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative max-w-7xl mx-auto pt-16 px-6 md:px-12">
+        <div class="relative flex flex-col items-center">
+            <!-- Spinning Badge - adjusted for mobile -->
+            <div class="absolute right-4 md:right-20 top-4 md:top-0 z-20">
+                <div class="relative w-28 h-28 md:w-36 md:h-36 flex items-center justify-center">
+                    <svg viewBox="0 0 100 100" class="w-full h-full animate-spin-slow">
+                        <path id="circlePath" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="transparent"/>
+                        <text class="circle-text uppercase text-[0.65rem] fill-gray-500 font-medium">
+                            <textPath xlink:href="#circlePath">Let's build AI for healthcare! Let's build AI for healthcare!</textPath>
+                        </text>
+                    </svg>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Image -->
+            <div class="relative w-full max-w-lg aspect-square rounded-full bg-[#fdf2f8] border-[14px] border-white shadow-2xl overflow-hidden group">
+                <img src="profile-img.png" alt="Nauman Ali Shah" class="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-pink-100/20 to-transparent"></div>
+            </div>
+
+            <!-- Large Name -->
+            <div class="text-center mt-[-50px] md:mt-[-90px] relative z-20 w-full">
+                <h1 class="text-[16vw] md:text-[11rem] font-bold tracking-tight text-[#1f2937] leading-none opacity-95">Nauman</h1>
+                <div class="flex items-center justify-center gap-4 mt-2">
+                    <div class="h-[1px] w-12 bg-gray-300"></div>
+                    <p class="mono-font text-gray-400 tracking-[0.4em] uppercase text-xs md:text-sm">AI & ML Engineer • Medical AI Specialist</p>
+                    <div class="h-[1px] w-12 bg-gray-300"></div>
+                </div>
+            </div>
+
+            <!-- Quote - remains desktop-only as original -->
+            <div class="hidden lg:block absolute bottom-32 right-10 max-w-[280px] text-right">
+                <span class="text-6xl text-pink-100 serif-font absolute -top-10 right-0 -z-10">"</span>
+                <p class="text-sm italic text-gray-600 leading-relaxed">
+                    "AI isn't just code — it's a bridge to make healthcare accessible, accurate, and human-centered."
+                </p>
+                <p class="text-[10px] font-bold uppercase tracking-widest mt-3 text-gray-400">— NAUMAN ALI SHAH</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Grid -->
+    <section class="bg-[#e0f2fe] mt-24 py-24 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+            <div class="space-y-5">
+                <div class="w-14 h-14 bg-[#1f2937] rounded-xl flex items-center justify-center text-white shadow-xl">
+                    <i class="fas fa-brain text-2xl"></i>
+                </div>
+                <h3 class="uppercase font-bold text-[11px] tracking-[0.25em]">Medical AI & Computer Vision</h3>
+                <p class="text-xs text-gray-700 leading-relaxed font-medium">Building segmentation & classification models for MRI, X-ray, and dermatology imaging.</p>
+            </div>
+            <div class="space-y-5">
+                <div class="w-14 h-14 bg-[#1f2937] rounded-xl flex items-center justify-center text-white shadow-xl">
+                    <i class="fas fa-network-wired text-2xl"></i>
+                </div>
+                <h3 class="uppercase font-bold text-[11px] tracking-[0.25em]">Deep Learning Models</h3>
+                <p class="text-xs text-gray-700 leading-relaxed font-medium">Custom CNNs, U-Nets, transfer learning with PyTorch/TensorFlow for healthcare diagnostics.</p>
+            </div>
+            <div class="space-y-5">
+                <div class="w-14 h-14 bg-[#1f2937] rounded-xl flex items-center justify-center text-white shadow-xl">
+                    <i class="fas fa-comment-medical text-2xl"></i>
+                </div>
+                <h3 class="uppercase font-bold text-[11px] tracking-[0.25em]">NLP & Agentic AI</h3>
+                <p class="text-xs text-gray-700 leading-relaxed font-medium">Medical NER, LLMs, LangChain/CrewAI for clinical text and autonomous agents.</p>
+            </div>
+            <div class="space-y-5">
+                <div class="w-14 h-14 bg-[#1f2937] rounded-xl flex items-center justify-center text-white shadow-xl">
+                    <i class="fas fa-code text-2xl"></i>
+                </div>
+                <h3 class="uppercase font-bold text-[11px] tracking-[0.25em]">Web + AI Integration</h3>
+                <p class="text-xs text-gray-700 leading-relaxed font-medium">Next.js/React frontends with FastAPI backends for deploying AI models.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About & Skills -->
+    <section id="about" class="max-w-7xl mx-auto py-24 md:py-32 px-6 md:px-12">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
+            <!-- Sidebar -->
+            <div class="lg:col-span-3 space-y-12">
+                <div>
+                    <h4 class="flex items-center gap-3 uppercase font-bold text-[10px] tracking-[0.3em] text-blue-500 mb-6">
+                        <span class="p-1.5 bg-blue-50 rounded"><i class="fas fa-user"></i></span>
+                        Personal Info
+                    </h4>
+                    <div class="space-y-3 text-[11px] mono-font text-gray-600 uppercase tracking-widest">
+                        <p><span class="text-gray-900 font-bold">Name:</span> Nauman Ali Shah</p>
+                        <p><span class="text-gray-900 font-bold">Email:</span> naumanalishah393@gmail.com</p>
+                        <p><span class="text-gray-900 font-bold">Location:</span> Islamabad, Pakistan</p>
+                        <p><span class="text-gray-900 font-bold">Education:</span> GCU Lahore</p>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="flex items-center gap-3 uppercase font-bold text-[10px] tracking-[0.3em] text-blue-500 mb-6">
+                        <span class="p-1.5 bg-blue-50 rounded"><i class="fas fa-star"></i></span>
+                        Main Skills
+                    </h4>
+                    <ul class="space-y-4 text-[11px] font-bold text-gray-600 uppercase tracking-[0.2em]">
+                        <li>Python / PyTorch / TensorFlow <span class="float-right mono-font text-gray-400">95%</span></li>
+                        <div class="flex gap-1">
+                            <div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div>
+                        </div>
+                        <li>Computer Vision & U-Net <span class="float-right mono-font text-gray-400">92%</span></li>
+                        <div class="flex gap-1">
+                            <div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot"></div>
+                        </div>
+                        <li>NLP & Generative AI <span class="float-right mono-font text-gray-400">85%</span></li>
+                        <div class="flex gap-1">
+                            <div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot"></div><div class="skill-dot"></div>
+                        </div>
+                        <li>Web Dev (Next.js / React) <span class="float-right mono-font text-gray-400">80%</span></li>
+                        <div class="flex gap-1">
+                            <div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot skill-dot-filled"></div><div class="skill-dot"></div><div class="skill-dot"></div><div class="skill-dot"></div>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Biography -->
+            <div class="lg:col-span-9">
+                <h2 class="text-6xl md:text-8xl font-bold mb-12 text-[#1f2937]">Biography</h2>
+                <div class="border-t-2 border-gray-200 pt-12 flex flex-col md:flex-row gap-12">
+                    <div class="flex-1 space-y-6 text-sm text-gray-600 leading-relaxed font-medium">
+                        <p><span class="text-gray-900 font-bold text-lg">Hi, I'm Nauman.</span> I'm a self-taught AI & ML Engineer and Medical AI Specialist bridging medicine and artificial intelligence. With a strong pre-medical background (96.6% in 9th, 95.3% in 10th grade), I pivoted to code and AI to build impactful healthcare solutions.</p>
+                        <p>Currently a student at GCU Lahore, I focus on applications of AI in medicine — from medical imaging segmentation to clinical NLP and agentic systems. Passionate about making high-quality healthcare accessible through technology.</p>
+                    </div>
+                    <div class="flex-1 grid grid-cols-2 gap-4">
+                        <div class="rounded-[40px] overflow-hidden bg-gray-100"><img src="gcu.jpg" class="w-full h-full object-cover"></div>
+                        <div class="rounded-[40px] overflow-hidden bg-gray-100"><img src="main.jpeg" class="w-full h-full object-cover"></div>
+                    </div>
+                </div>
+
+                <!-- Education & Certifications -->
+                <div class="mt-24" id="education">
+                    <h2 class="text-6xl md:text-8xl font-bold mb-12 text-[#1f2937]">Education & Certifications</h2>
+                    <div class="border-t-2 border-gray-200 pt-12 grid grid-cols-1 md:grid-cols-2 gap-12">
+                        <div class="space-y-8">
+                            <h3 class="serif-font text-3xl font-bold italic">Education</h3>
+                            <div class="space-y-6">
+                                <div>
+                                    <p class="text-[9px] mono-font text-gray-400 mb-1 uppercase font-bold tracking-widest">2021-2023</p>
+                                    <h4 class="font-bold text-base">Islamia Collegiate School Peshawar</h4>
+                                    <p class="text-sm text-blue-600 mt-1">Medical Sciences</p>
+                                </div>
+
+                                <div>
+                                    <p class="text-[9px] mono-font text-gray-400 mb-1 uppercase font-bold tracking-widest">2023-2025</p>
+                                    <h4 class="font-bold text-base">Government College University (GCU) Lahore</h4>
+                                    <p class="text-sm text-blue-600 mt-1">Medicine / AI Focus</p>
+                                </div>
+
+                                <div>
+                                    <p class="text-[9px] mono-font text-gray-400 mb-1 uppercase font-bold tracking-widest">2024-onward</p>
+                                    <h4 class="font-bold text-base">Online Certifications</h4>
+                                    <p class="text-sm text-blue-600 mt-1">AI in Healthcare</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-8">
+                            <h3 class="serif-font text-3xl font-bold italic">Key Certifications</h3>
+                            <div class="space-y-5 text-sm">
+                                <p>• <a href="https://www.coursera.org/account/accomplishments/specialization/05EB4IJ9ARHX" class="text-blue-600 hover:underline">Machine Learning Specialization – DeepLearning.AI</a></p>
+                                <p>• <a href="https://www.coursera.org/account/accomplishments/specialization/RDLJG6R7AB0N" class="text-blue-600 hover:underline">Deep Learning Specialization – DeepLearning.AI</a></p>
+                                <p>• <a href="https://coursera.org/share/15d7014797617665872540842147257f" class="text-blue-600 hover:underline">AI for Medicine – DeepLearning.AI</a></p>
+                                <p>• <a href="https://coursera.org/share/497f9a62ab4a6a7ee924af92ce6cf76f" class="text-blue-600 hover:underline">AI in Healthcare – Stanford Online</a></p>
+                                <p>• <a href="https://www.coursera.org/account/accomplishments/specialization/VV4IG275I74X" class="text-blue-600 hover:underline">NLP Specialization – DeepLearning.AI</a></p>
+                                <p>• <a href="https://www.coursera.org/account/accomplishments/specialization/O6ASTH1YXR4S" class="text-blue-600 hover:underline">IBM Generative AI Engineering</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Works -->
+    <section id="portfolio" class="bg-white py-24 md:py-32 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-20">
+                <div class="space-y-4">
+                    <h4 class="flex items-center gap-3 uppercase font-bold text-[10px] tracking-[0.3em] text-blue-500">
+                        <span class="p-1.5 bg-blue-50 rounded"><i class="fas fa-images"></i></span>
+                        Explore My Projects
+                    </h4>
+                    <a href="https://github.com/Nauman123-coder" target="_blank" class="text-xs text-gray-400 font-bold uppercase tracking-[0.2em] border-b-2 border-gray-100 hover:text-black hover:border-black transition-all">github.com/Nauman123-coder</a>
+                </div>
+                <h2 class="text-6xl md:text-[8rem] font-bold text-[#1f2937] leading-none">Featured Works</h2>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                <a href="braintumorprject.html" class="block group cursor-pointer">
+                    <div class="aspect-[4/5] bg-gray-50 overflow-hidden mb-6 curved-img-tl relative shadow-md">
+                        <img src="mri.png" 
+                            class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
+                    </div>
+                    <h3 class="serif-font text-2xl font-bold group-hover:text-blue-600 transition-colors">
+                        Brain Tumor Segmentation 3D U-Net
+                    </h3>
+                    <p class="text-xs mono-font text-gray-500 mt-2 uppercase tracking-widest">
+                        PyTorch • 3D U-Net • MRI • 2025
+                    </p>
+                    <p class="text-sm text-gray-600 mt-3">
+                        Multi-class segmentation of edema, non-enhancing, and enhancing tumors using custom Soft Dice Loss.
+                    </p>
+                </a>
+
+                <!-- Project 2 -->
+                <a href="chest-xray.html" class="block group pt-8">
+                    <div class="aspect-[4/5] bg-gray-50 overflow-hidden mb-6 arch-mask relative shadow-md">
+                        <img src="chest-xray.png" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
+                    </div>
+                    <h3 class="serif-font text-2xl font-bold group-hover:text-blue-600 transition-colors">
+                        Chest X-Ray Multi-Label Diagnosis
+                    </h3>
+                    <p class="text-xs mono-font text-gray-500 mt-2 uppercase tracking-widest">
+                        DenseNet121 • Transfer Learning • GradCAM
+                    </p>
+                    <p class="text-sm text-gray-600 mt-3">
+                        Deep learning for chest X-ray pathology detection with interpretability via GradCAM.
+                    </p>
+                </a>
+
+
+                <!-- Project 3 -->
+                <a href="skin-cancer.html" class="block group">
+                    <div class="aspect-[4/5] bg-gray-50 overflow-hidden mb-6 rounded-sm relative shadow-md">
+                        <img src="skin-cancer.png" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
+                    </div>
+                    <h3 class="serif-font text-2xl font-bold group-hover:text-blue-600 transition-colors">
+                        Skin Cancer Detection (HAM10000)
+                    </h3>
+                    <p class="text-xs mono-font text-gray-500 mt-2 uppercase tracking-widest">
+                        EfficientNet-B0 • Grad-CAM • 7 Classes
+                    </p>
+                    <p class="text-sm text-gray-600 mt-3">
+                        Classification of skin lesions with real-time explainability heatmaps.
+                    </p>
+                </a>
+
+
+                <!-- Project 4 -->
+                <a href="guardian_agent.html" class="block group pt-10">
+                    <div class="aspect-[4/5] bg-gray-50 overflow-hidden mb-6 curved-img-tl relative shadow-md">
+                        <img src="cyberAgent.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
+                    </div>
+                    <h3 class="serif-font text-2xl font-bold group-hover:text-blue-600 transition-colors">
+                        Cybersecurity Guardian Agent
+                    </h3>
+                    <p class="text-xs mono-font text-gray-500 mt-2 uppercase tracking-widest">
+                        LangChain/LangGraph • Threat Hunting
+                    </p>
+                    <p class="text-sm text-gray-600 mt-3">
+                        Autonomous threat hunter that analyzes security logs, checks IPs against AbuseIPDB, scans file hashes across 70+ AV engines via VirusTotal, and executes mitigation actions — all in under 90 seconds.
+                    </p>
+                </a>
+
+
+                <!-- Project 5 -->
+                <a href="aegis.html" class="block group">
+                    <div class="aspect-[4/5] bg-gray-50 overflow-hidden mb-6 rounded-sm relative shadow-md">
+                        <img src="aegis.jpeg" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
+                    </div>
+                    <h3 class="serif-font text-2xl font-bold group-hover:text-blue-600 transition-colors">
+                        AI-powered Content Disarm
+                    </h3>
+                    <p class="text-xs mono-font text-gray-500 mt-2 uppercase tracking-widest">
+                        Python • Groq-LLM • Cybersecurity
+                    </p>
+                    <p class="text-sm text-gray-600 mt-3">
+                        AI-powered Content Disarm & Reconstruction engine for PDF and DOCX files. Detects and strips malicious JavaScript, macros, OLE objects, and embedded threats using PyMuPDF, python-docx, and Groq LLM analysis
+                    </p>
+                </a>
+
+
+                <!-- Project 6 -->
+                <a href="bio-seg.html" class="block group pt-8">
+                    <div class="aspect-[4/5] bg-gray-50 overflow-hidden mb-6 arch-mask relative shadow-md">
+                        <img src="neuron-seg2.jpeg" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
+                    </div>
+                    <h3 class="serif-font text-2xl font-bold group-hover:text-blue-600 transition-colors">
+                        BioSeg-UNet (Neuron Segmentation)
+                    </h3>
+                    <p class="text-xs mono-font text-gray-500 mt-2 uppercase tracking-widest">
+                        PyTorch • U-Net • Electron Microscopy
+                    </p>
+                    <p class="text-sm text-gray-600 mt-3">
+                        Biomedical image segmentation for neuron structures in microscopy data.
+                    </p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience -->
+    <section id="experience" class="max-w-7xl mx-auto py-24 md:py-32 px-6 md:px-12">
+        <h2 class="text-6xl md:text-[8rem] font-bold mb-24 text-[#2d2d2d] leading-none">Experience</h2>
+        
+        <div class="relative">
+            <!-- Central Line (desktop only) -->
+            <div class="absolute left-0 md:left-[25%] top-0 bottom-0 w-[1.5px] bg-gray-200 hidden md:block"></div>
+            
+            <div class="space-y-24">
+                <!-- Exp Item 1 -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 relative">
+                    <div class="md:col-span-3 md:text-right">
+                        <p class="text-[10px] font-bold text-gray-800 uppercase tracking-[0.3em]">AI Research & Dev</p>
+                        <p class="text-[10px] mono-font text-gray-400 mt-2 uppercase">Jan 2024 - PRESENT</p>
+                        <p class="text-[10px] mono-font text-gray-400 uppercase">Lahore, PK</p>
+                    </div>
+                    <div class="hidden md:flex md:col-span-1 justify-center">
+                        <div class="w-4 h-4 rounded-full bg-pink-200 border-4 border-white mt-1.5 shadow-sm ring-2 ring-pink-50"></div>
+                    </div>
+                    <div class="md:col-span-8 space-y-5">
+                        <h3 class="serif-font text-4xl font-bold">Independent AI Researcher</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed font-medium">Developing applications at the intersection of healthcare and AI. Focusing on the technical implementation of LLMs and Computer Vision to solve medical accessibility challenges in the region.</p>
+                        <div class="flex gap-4">
+                            <a href="#" class="text-[9px] font-bold tracking-widest text-blue-300 uppercase underline hover:text-blue-500 transition-colors">VIEW RECOMENDATIONS</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exp Item 2 -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 relative">
+                    <div class="md:col-span-3 md:text-right">
+                        <p class="text-[10px] font-bold text-gray-800 uppercase tracking-[0.3em]">Frontend Development</p>
+                        <p class="text-[10px] mono-font text-gray-400 mt-2 uppercase">Jan 2024 - PRESENT</p>
+                        <p class="text-[10px] mono-font text-gray-400 uppercase">Lahore, PK</p>
+                    </div>
+                    <div class="hidden md:flex md:col-span-1 justify-center">
+                        <div class="w-4 h-4 rounded-full bg-pink-200 border-4 border-white mt-1.5 shadow-sm ring-2 ring-pink-50"></div>
+                    </div>
+                    <div class="md:col-span-8 space-y-5">
+                        <h3 class="serif-font text-4xl font-bold">Frontend Developer</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed font-medium">Building and maintaining personal web applications using React.js and modern frontend technologies.
+                        Designing and implementing complete user interfaces from concept to deployment.</p>
+                        <div class="flex gap-4">
+                            <a href="#" class="text-[9px] font-bold tracking-widest text-blue-300 uppercase underline hover:text-blue-500 transition-colors">VIEW RECOMENDATIONS</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exp Item 3 -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 relative">
+                    <div class="md:col-span-3 md:text-right">
+                        <p class="text-[10px] font-bold text-gray-800 uppercase tracking-[0.3em]">Backend Development</p>
+                        <p class="text-[10px] mono-font text-gray-400 mt-2 uppercase">Jan 2024 - PRESENT</p>
+                        <p class="text-[10px] mono-font text-gray-400 uppercase">Lahore, PK</p>
+                    </div>
+                    <div class="hidden md:flex md:col-span-1 justify-center">
+                        <div class="w-4 h-4 rounded-full bg-pink-200 border-4 border-white mt-1.5 shadow-sm ring-2 ring-pink-50"></div>
+                    </div>
+                    <div class="md:col-span-8 space-y-5">
+                        <h3 class="serif-font text-4xl font-bold">Backend Developer</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed font-medium">Learning and building backend applications using Node.js/Express or Python frameworks and related technologies.
+                        Designing and implementing RESTful APIs and server-side logic for personal full-stack projects.</p>
+                        <div class="flex gap-4">
+                            <a href="#" class="text-[9px] font-bold tracking-widest text-blue-300 uppercase underline hover:text-blue-500 transition-colors">VIEW RECOMENDATIONS</a>
+                        </div>
+                    </div>
+                </div>
+                 
+                <!-- Exp Item 4 -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 relative">
+                    <div class="md:col-span-3 md:text-right">
+                        <p class="text-[10px] font-bold text-gray-800 uppercase tracking-[0.3em]">AI Development</p>
+                        <p class="text-[10px] mono-font text-gray-400 mt-2 uppercase">Mar 2022 - Dec 2023</p>
+                        <p class="text-[10px] mono-font text-gray-400 uppercase">Self Employed</p>
+                    </div>
+                    <div class="hidden md:flex md:col-span-1 justify-center">
+                        <div class="w-4 h-4 rounded-full bg-blue-200 border-4 border-white mt-1.5 shadow-sm ring-2 ring-blue-50"></div>
+                    </div>
+                    <div class="md:col-span-8 space-y-5">
+                        <h3 class="serif-font text-4xl font-bold">Full Stack AI Developer</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed font-medium">Mastering AI from scratch: simple ML to advanced DL, RL, GenAI, and agentic AI systems through intensive self-study.
+                        Building diverse hands-on projects including ML models, deep learning apps, generative AI tools, and autonomous agents.</p>
+                        <div class="flex gap-4">
+                            <a href="#" class="text-[9px] font-bold tracking-widest text-blue-300 uppercase underline hover:text-blue-500 transition-colors">VIEW PROJECT REVIEWS</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contacts" class="bg-[#1f2937] text-white py-24 px-6 md:px-12 rounded-t-[60px] md:rounded-t-[100px]">
+        <div class="max-w-4xl mx-auto text-center space-y-12">
+            <h2 class="serif-font text-5xl md:text-7xl italic leading-tight">Let's collaborate on the next breakthrough in Medical AI?</h2>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-10 md:gap-20 text-[10px] font-bold tracking-[0.4em] uppercase text-gray-300">
+                <a href="mailto:naumanalishah393@gmail.com" class="flex flex-col gap-2 hover:text-white transition-colors group">
+                    <span class="text-white opacity-50 text-[9px] group-hover:opacity-100 transition-opacity">EMAIL</span>
+                    NAUMANALISHAH393@GMAIL.COM
+                </a>
+                <a href="https://github.com/Nauman123-coder" class="flex flex-col gap-2 hover:text-white transition-colors group">
+                    <span class="text-white opacity-50 text-[9px] group-hover:opacity-100 transition-opacity">GITHUB</span>
+                    GITHUB.COM/NAUMAN123-CODER
+                </a>
+                <a href="https://www.linkedin.com/in/nauman-ali-shah-27387b351" class="flex flex-col gap-2 hover:text-white transition-colors group">
+                    <span class="text-white opacity-50 text-[9px] group-hover:opacity-100 transition-opacity">LINKEDIN</span>
+                    NAUMAN ALI SHAH
+                </a>
+            </div>
+            <div class="pt-16 flex flex-col items-center gap-8">
+                <div class="flex gap-8 text-2xl text-gray-400">
+                    <a href="https://github.com/Nauman123-coder" class="hover:text-white"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/nauman-ali-shah-27387b351" class="hover:text-white"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://x.com/NaumanAS393" class="hover:text-white"><i class="fab fa-twitter"></i></a>
+                </div>
+                <div class="text-[9px] text-gray-500 tracking-[0.5em] font-bold uppercase">
+                    © 2026 NAUMAN ALI SHAH. ALL RIGHTS RESERVED.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Menu Script -->
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('menu-icon');
+            
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-xmark');
+            } else {
+                menu.classList.add('hidden');
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-bars');
+            }
+        }
+        
+        // Close mobile menu when clicking outside (optional enhancement)
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('mobile-menu');
+            const hamburger = document.querySelector('button[onclick="toggleMobileMenu()"]');
+            if (!menu.contains(e.target) && !hamburger.contains(e.target) && !menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+                const icon = document.getElementById('menu-icon');
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-bars');
+            }
+        });
+    </script>
+
+</body>
+</html>
